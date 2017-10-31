@@ -7,6 +7,7 @@
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
     <style>
         #logo{
@@ -35,17 +36,14 @@
 </head>
 
 
+<!--
+   // $dataPoints = array();
 
-<?php
-$dataPoints = array();
-$count = 1;
-//date_timestamp_get (date_create("$report->time"))
-foreach ($reports as $report){
+  //  foreach ($reports as $report){
 
-    array_push($dataPoints, array("x" =>strtotime("$report->time"), "y" => $report->value));
-    //$count++;
+   // array_push($dataPoints, array("x" =>(date_timestamp_get(new DateTime($report->time))*1000), "y" => $report->value));
 }
-?>
+?>-->
 
 
 
@@ -62,35 +60,8 @@ foreach ($reports as $report){
         <h1>Sensor report: <?php echo $sensor->name;?></h1>
     </div>
 
-        <div  id="chartContainer" ></div>
-        <script type="text/javascript">
-            $(function () {
-                var chart = new CanvasJS.Chart("chartContainer", {
-                    theme: "theme2",
-                    zoomEnabled: true,
-                    animationEnabled: true,
-                    title: {
-                        text: "Performance Demo - 10000 DataPoints"
-                    },
-                    subtitles:[
-                        {   text: "(Try Zooming & Panning)" }
-                    ],
 
-                    data: [
-                        {
-                            type: "line",
-                            xValueType: "dateTime",
-                            dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
-                        }
-                    ]
-                });
-                chart.render();
-            });
-        </script>
-
-
-
-
+    <div id="chartContainer" style="height: 300px; width: 100%;"></div>
 
 
 <div>
@@ -108,12 +79,20 @@ foreach ($reports as $report){
             </thead>
             <tbody>
             <?php if ($reports){?>
+                <?php
+                $dataPoints = array();
+
+                foreach ($reports as $report){
+
+                    array_push($dataPoints, array("x" =>(date_timestamp_get(new DateTime($report->time))*1000), "y" => $report->value));
+                }
+                ?>
+
                 <?php foreach ($reports as $report){ ?>
                 <tr>
                     <td><?php echo $report->sensorID; ?></td>
                     <td><?php echo $report->value." ". $sensor->unit; ?></td>
                     <td><?php echo date_format(date_create("$report->time"),'d-m-Y/ H:i:s'); ?></td>
-
                 </tr>
                 <?php } ?>
             <?php }
@@ -131,6 +110,36 @@ foreach ($reports as $report){
         </table>
     </div>
     </div>
+
+    <script type="text/javascript">
+        window.onload = function () {
+            var chart = new CanvasJS.Chart("chartContainer",
+                {
+                    title:{
+                        text: "Sensor report chart: <?php echo ($sensor->name); ?>"
+                    },
+                    axisX:{
+                        title: "timeline",
+                        gridThickness: 2
+                    },
+                    axisY: {
+                        title: "<?php echo ($sensor->unit); ?>"
+                    },
+                    data: [
+                        {
+                            type: "area",
+                            xValueType: "dateTime",
+                            dataPoints: //array
+                            <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+
+                        }
+                    ]
+                });
+
+            chart.render();
+        }
+    </script>
+
 
 
     <hr/>

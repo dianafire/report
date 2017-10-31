@@ -15,21 +15,22 @@ class Controller_Report extends Controller
 
     }
 
-    public function action_one($id)
+    public function action_one($id) // VIEW SPECIFIC
     {
-        $sensor = Model_Sensors::find_by_pk($id);
+        Session::set('id', $id);
+
+        $sensor = Model_Sensors::find_by_pk(Session::get('id'));
         $data = array('sensor'=>$sensor);
 
         if ($sensor){
             return Response::forge(View::forge('one',$data));
         }
 
-        //echo "3";
 
 
     }
 
-    public function action_edit($id)
+    public function action_edit($id) // EDIT NAME/ UNIT
     {
 
         if (Input::post('update'))
@@ -48,7 +49,8 @@ class Controller_Report extends Controller
 
         else
         {
-            $sensor = Model_Sensors::find_by_pk($id);
+            Session::set('id', $id);
+            $sensor = Model_Sensors::find_by_pk(Session::get('id'));
             $data = array('sensor'=>$sensor);
 
             return Response::forge(View::forge('edit',$data));
@@ -58,16 +60,17 @@ class Controller_Report extends Controller
     }
 
 
-    public function action_delete($id)
+    public function action_delete($id) // DELETE SENSOR AND ITS REPORTS
     {
+        Session::set('id', $id);
 
-        $sensor = Model_Sensors::find_by_pk($id);
+        $sensor = Model_Sensors::find_by_pk(Session::get('id'));
 
         if ($sensor){
             $sensor->delete();
 
 
-            $reports = Model_Reports::find_by('sensorID', $id, '=');
+            $reports = Model_Reports::find_by('sensorID', Session::get('id'), '=');
 
             foreach ($reports as $report){
                 $report->delete();
@@ -81,17 +84,19 @@ class Controller_Report extends Controller
 
     }
 
-    public function action_history($id)
-    {
 
-        $sensor = Model_Sensors::find_by_pk($id);
+    public function action_history($id) // SHOW SENSOR REPORT AND CHART
+    {
+        Session::set('id', $id);
+
+        $sensor = Model_Sensors::find_by_pk(Session::get('id'));
 
 
         $reports= Model_Reports::find(array(
             'select' => array('sensorID', 'value', 'time'),
             'where' => array(
 
-                'sensorID' => $id,
+                'sensorID' => Session::get('id'),
 
             ),
             'order_by' => array(
@@ -113,18 +118,4 @@ class Controller_Report extends Controller
 
 
 }
-/*class Controller_Welcome extends Controller
-{
-    /**
-     * The basic welcome message
-     *
-     * @access  public
-     * @return  Response
-     */
-   /* public function action_index()
-    {
-        //return Response::forge(View::forge('welcome/index'));
-        die ('hihi');
-    }
-}
-*/
+
