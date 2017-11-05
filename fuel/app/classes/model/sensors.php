@@ -7,7 +7,9 @@ class Model_Sensors extends \Model_Crud
     protected static $_properties = array(
         'id',
         'name',
-        'unit'
+        'unit',
+        'lat',
+        'lng'
 
     );
 

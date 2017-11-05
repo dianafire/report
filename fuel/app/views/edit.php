@@ -42,18 +42,36 @@
         <h1>Sensor: <?php echo $sensor->name; ?></h1>
     </div>
 
+    <?php if (Session::get_flash('invalid')){?>
+
+        <div class="alert alert-danger"><strong><?php echo (Session::get_flash('invalid')); ?></strong></div>
+
+    <?php } ?>
+
     <?php echo Form::open("index.php/report/edit/ <?php echo $sensor->id; ?>"); ?>
 
         <div class="form-group">
             <?php echo Form::label('Edit name', 'name'); ?>
-            <?php echo Form::input('name', isset($sensor) ? $sensor->name : '', array('class'=>'form-control')); ?>
+            <?php echo Form::input('name', isset($sensor) ? $sensor->name : '', array('class'=>'form-control', 'required'=>'required')); ?>
 
         </div>
 
 
         <div class="form-group ">
             <?php echo Form::label('Edit unit', 'unit'); ?>
-            <?php echo Form::input('unit', isset($sensor) ? $sensor->unit : '', array('class'=>'form-control')); ?>
+            <?php echo Form::input('unit', isset($sensor) ? $sensor->unit : '', array('class'=>'form-control', 'required'=>'required')); ?>
+
+        </div>
+
+        <div class="form-group ">
+            <?php echo Form::label('Edit latitude', 'lat'); ?>
+            <?php echo Form::input('lat', isset($sensor) ? $sensor->lat : '', array('class'=>'form-control', 'required'=>'required', 'type'=>'number', 'step'=>'0.000001')); ?>
+
+        </div>
+
+        <div class="form-group ">
+            <?php echo Form::label('Edit longitudе', 'lng'); ?>
+            <?php echo Form::input('lng', isset($sensor) ? $sensor->lng : '', array('class'=>'form-control','required'=>'required', 'type'=>'number','step'=>'0.000001')); ?>
 
         </div>
 
